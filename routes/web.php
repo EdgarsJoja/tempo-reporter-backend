@@ -11,6 +11,14 @@
 |
 */
 
+use Laravel\Lumen\Routing\Router;
+
+/** @var Router $router */
 $router->get('/', function () use ($router) {
     return $router->app->version();
+});
+
+$router->group(['prefix' => 'auth', 'namespace' => 'Auth'], function () use ($router) {
+    $router->post('register', ['uses' => 'RegisterController@execute', 'as' => 'register']);
+    $router->post('login', ['uses' => 'LoginController@execute', 'as' => 'login']);
 });
