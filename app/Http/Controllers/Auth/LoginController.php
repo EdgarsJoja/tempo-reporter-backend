@@ -4,19 +4,18 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\ApiControllerInterface;
 use App\Http\Controllers\Controller;
-use App\User;
+use App\Http\Utils\ResponseDataInterface;
+use App\Http\Utils\UserValidationInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
 /**
- * Class RegisterController
+ * Class LoginController
  * @package App\Http\Controllers\Auth
- *
- * @todo: Create API request interface and make all controllers implement it
  */
-class RegisterController extends Controller implements ApiControllerInterface
+class LoginController extends Controller implements ApiControllerInterface
 {
     /**
      * @var Request
@@ -29,48 +28,54 @@ class RegisterController extends Controller implements ApiControllerInterface
     protected $jsonResponse;
 
     /**
+     * @var ResponseDataInterface
+     */
+    protected $responseData;
+
+    /**
+     * @var UserValidationInterface
+     */
+    protected $userValidation;
+
+    /**
      * Create a new controller instance.
      *
      * @param Request $request
      * @param JsonResponse $jsonResponse
+     * @param ResponseDataInterface $responseData
+     * @param UserValidationInterface $userValidation
      */
-    public function __construct(Request $request, JsonResponse $jsonResponse)
-    {
+    public function __construct(
+        Request $request,
+        JsonResponse $jsonResponse,
+        ResponseDataInterface $responseData,
+        UserValidationInterface $userValidation
+    ) {
         $this->request = $request;
         $this->jsonResponse = $jsonResponse;
+        $this->responseData = $responseData;
+        $this->userValidation = $userValidation;
     }
 
     /**
-     * Register new user
+     * Login user
      */
     public function execute(): JsonResponse
     {
-        $responseData = $this->initResponse();
+        $this->responseData->initData();
 
         try {
             $this->validateRequest();
             $this->processRequest();
         } catch (ValidationException $e) {
-            $responseData['error'] = true;
-            $responseData['message'] = __('Input data could not be validated.');
+            $this->responseData->addError(__('Invalid login data.'));
 
             Log::alert($e->getMessage());
         }
 
-        $this->jsonResponse->setData($responseData);
+        $this->jsonResponse->setData($this->responseData->getData());
 
         return $this->jsonResponse;
-    }
-
-    /**
-     * @return array
-     */
-    protected function initResponse(): array
-    {
-        return [
-            'error' => false,
-            'message' => 'Registration successful.'
-        ];
     }
 
     /**
@@ -89,9 +94,14 @@ class RegisterController extends Controller implements ApiControllerInterface
      */
     protected function processRequest(): void
     {
-        $user = new User($this->request->post());
-        $user->password = app('hash')->make($this->request->post('password'));
+        $credentials = $this->request->only('email', 'password');
 
-        $user->save();
+        $user = $this->userValidation->validate($credentials);
+
+        if ($user->id) {
+            $this->responseData->addSuccess('Success');
+        } else {
+            $this->responseData->addError('nope');
+        }
     }
 }
