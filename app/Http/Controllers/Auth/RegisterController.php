@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\ApiControllerInterface;
 use App\Http\Controllers\Controller;
+use App\Http\Utils\ResponseDataInterface;
 use App\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -13,8 +14,6 @@ use Illuminate\Validation\ValidationException;
 /**
  * Class RegisterController
  * @package App\Http\Controllers\Auth
- *
- * @todo: Create API request interface and make all controllers implement it
  */
 class RegisterController extends Controller implements ApiControllerInterface
 {
@@ -29,15 +28,22 @@ class RegisterController extends Controller implements ApiControllerInterface
     protected $jsonResponse;
 
     /**
+     * @var ResponseDataInterface
+     */
+    protected $responseData;
+
+    /**
      * Create a new controller instance.
      *
      * @param Request $request
      * @param JsonResponse $jsonResponse
+     * @param ResponseDataInterface $responseData
      */
-    public function __construct(Request $request, JsonResponse $jsonResponse)
+    public function __construct(Request $request, JsonResponse $jsonResponse, ResponseDataInterface $responseData)
     {
         $this->request = $request;
         $this->jsonResponse = $jsonResponse;
+        $this->responseData = $responseData;
     }
 
     /**
@@ -45,32 +51,22 @@ class RegisterController extends Controller implements ApiControllerInterface
      */
     public function execute(): JsonResponse
     {
-        $responseData = $this->initResponse();
+        $this->responseData->initData();
 
         try {
             $this->validateRequest();
             $this->processRequest();
+
+            $this->responseData->addSuccess(__('Registration finished successfully'));
         } catch (ValidationException $e) {
-            $responseData['error'] = true;
-            $responseData['message'] = __('Input data could not be validated.');
+            $this->responseData->addError(__('Input data could not be validated.'));
 
             Log::alert($e->getMessage());
         }
 
-        $this->jsonResponse->setData($responseData);
+        $this->jsonResponse->setData($this->responseData->getData());
 
         return $this->jsonResponse;
-    }
-
-    /**
-     * @return array
-     */
-    protected function initResponse(): array
-    {
-        return [
-            'error' => false,
-            'message' => 'Registration successful.'
-        ];
     }
 
     /**

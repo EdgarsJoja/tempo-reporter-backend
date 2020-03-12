@@ -6,6 +6,8 @@ use App\Http\Controllers\ApiControllerInterface;
 use App\Http\Controllers\Controller;
 use App\Http\Utils\ResponseDataInterface;
 use App\Http\Utils\UserValidationInterface;
+use App\User;
+use App\User\ApiTokenGeneratorInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -38,23 +40,31 @@ class LoginController extends Controller implements ApiControllerInterface
     protected $userValidation;
 
     /**
+     * @var ApiTokenGeneratorInterface
+     */
+    protected $tokenGenerator;
+
+    /**
      * Create a new controller instance.
      *
      * @param Request $request
      * @param JsonResponse $jsonResponse
      * @param ResponseDataInterface $responseData
      * @param UserValidationInterface $userValidation
+     * @param ApiTokenGeneratorInterface $tokenGenerator
      */
     public function __construct(
         Request $request,
         JsonResponse $jsonResponse,
         ResponseDataInterface $responseData,
-        UserValidationInterface $userValidation
+        UserValidationInterface $userValidation,
+        ApiTokenGeneratorInterface $tokenGenerator
     ) {
         $this->request = $request;
         $this->jsonResponse = $jsonResponse;
         $this->responseData = $responseData;
         $this->userValidation = $userValidation;
+        $this->tokenGenerator = $tokenGenerator;
     }
 
     /**
@@ -67,6 +77,8 @@ class LoginController extends Controller implements ApiControllerInterface
         try {
             $this->validateRequest();
             $this->processRequest();
+
+            $this->responseData->addSuccess(__('Login successful'));
         } catch (ValidationException $e) {
             $this->responseData->addError(__('Invalid login data.'));
 
@@ -99,9 +111,28 @@ class LoginController extends Controller implements ApiControllerInterface
         $user = $this->userValidation->validate($credentials);
 
         if ($user->id) {
-            $this->responseData->addSuccess('Success');
+            $this->handleApiToken($user);
         } else {
-            $this->responseData->addError('nope');
+            $this->responseData->addError(__('Login failed'));
         }
+    }
+
+    /**
+     * @param User $user
+     */
+    protected function handleApiToken(User $user)
+    {
+        $apiToken = null;
+
+        if ($user->getApiToken()) {
+            $apiToken = $user->getApiToken();
+        } else {
+            $apiToken = $this->tokenGenerator->generate();
+
+            $user->setApiToken($apiToken);
+            $user->save();
+        }
+
+        $this->responseData->addData('api_token', $apiToken);
     }
 }

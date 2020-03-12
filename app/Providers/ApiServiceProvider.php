@@ -6,6 +6,8 @@ use App\Http\Utils\ResponseData;
 use App\Http\Utils\ResponseDataInterface;
 use App\Http\Utils\UserValidation;
 use App\Http\Utils\UserValidationInterface;
+use App\User\ApiTokenGenerator;
+use App\User\ApiTokenGeneratorInterface;
 use Illuminate\Support\ServiceProvider;
 
 /**
@@ -24,5 +26,8 @@ class ApiServiceProvider extends ServiceProvider
 
         // Auth
         $this->app->bind(UserValidationInterface::class, UserValidation::class);
+
+        // User
+        $this->app->bind(ApiTokenGeneratorInterface::class, ApiTokenGenerator::class);
     }
 }

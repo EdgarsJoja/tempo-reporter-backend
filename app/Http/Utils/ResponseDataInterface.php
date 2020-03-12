@@ -33,12 +33,12 @@ interface ResponseDataInterface
     public function addSuccess($successMessage);
 
     /**
-     * Add message to response
+     * Add info message to response
      *
-     * @param $message
+     * @param $infoMessage
      * @return mixed
      */
-    public function addMessage($message);
+    public function addInfoMessage($infoMessage);
 
     /**
      * Get all response data
@@ -46,5 +46,11 @@ interface ResponseDataInterface
      * @return array
      */
     public function getData(): array;
+
+    /**
+     * @param $key
+     * @param $value
+     */
+    public function addData($key, $value);
 }
 

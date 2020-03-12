@@ -8,6 +8,11 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Lumen\Auth\Authorizable;
 
+/**
+ * Class User
+ * @property string api_token
+ * @package App
+ */
 class User extends Model implements AuthenticatableContract, AuthorizableContract
 {
     use Authenticatable, Authorizable;
@@ -29,4 +34,23 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     protected $hidden = [
         'password', 'api_token', 'remember_token'
     ];
+
+    /**
+     * @param $value
+     * @return $this
+     */
+    public function setApiToken($value): self
+    {
+        $this->api_token = $value;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getApiToken(): string
+    {
+        return (string)$this->api_token;
+    }
 }
