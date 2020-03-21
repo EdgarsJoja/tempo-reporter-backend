@@ -10,5 +10,8 @@ use Illuminate\Http\JsonResponse;
  */
 interface ApiControllerInterface
 {
-    public function execute(): JsonResponse;
+    /**
+     * @return JsonResponse
+     */
+    public function __invoke(): JsonResponse;
 }

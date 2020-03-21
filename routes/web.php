@@ -19,6 +19,6 @@ $router->get('/', function () use ($router) {
 });
 
 $router->group(['prefix' => 'auth', 'namespace' => 'Auth'], function () use ($router) {
-    $router->post('register', ['uses' => 'RegisterController@execute', 'as' => 'register']);
-    $router->post('login', ['uses' => 'LoginController@execute', 'as' => 'login']);
+    $router->post('register', 'RegisterController');
+    $router->post('login', 'LoginController');
 });

@@ -70,7 +70,7 @@ class LoginController extends Controller implements ApiControllerInterface
     /**
      * Login user
      */
-    public function execute(): JsonResponse
+    public function __invoke(): JsonResponse
     {
         $this->responseData->initData();
 
@@ -133,6 +133,6 @@ class LoginController extends Controller implements ApiControllerInterface
             $user->save();
         }
 
-        $this->responseData->addData('api_token', $apiToken);
+        $this->responseData->addData('user_token', $apiToken);
     }
 }

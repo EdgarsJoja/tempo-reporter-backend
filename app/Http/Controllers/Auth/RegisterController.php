@@ -49,7 +49,7 @@ class RegisterController extends Controller implements ApiControllerInterface
     /**
      * Register new user
      */
-    public function execute(): JsonResponse
+    public function __invoke(): JsonResponse
     {
         $this->responseData->initData();
 

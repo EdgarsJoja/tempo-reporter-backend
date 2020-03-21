@@ -9,6 +9,8 @@ use App\Http\Utils\UserValidationInterface;
 use App\User\ApiTokenGenerator;
 use App\User\ApiTokenGeneratorInterface;
 use Illuminate\Support\ServiceProvider;
+use App\User\UserRepository;
+use App\User\UserRepositoryInterface;
 
 /**
  * Class ApiServiceProvider
@@ -29,5 +31,6 @@ class ApiServiceProvider extends ServiceProvider
 
         // User
         $this->app->bind(ApiTokenGeneratorInterface::class, ApiTokenGenerator::class);
+        $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
     }
 }
