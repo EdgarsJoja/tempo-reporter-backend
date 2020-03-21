@@ -5,14 +5,15 @@ namespace App\Http\Controllers\Api\v1;
 use App\Http\Controllers\Controller;
 use App\Http\Utils\ResponseDataInterface;
 use App\User\UserRepositoryInterface;
-use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 /**
- * Class UserController
+ * Class UserUpdateDataController
  * @package App\Http\Controllers\Api\v1
  */
-class UserController extends Controller
+class UserUpdateDataController extends Controller
 {
     /**
      * @var JsonResponse
@@ -46,23 +47,22 @@ class UserController extends Controller
     }
 
     /**
+     * @param Request $request
      * @param $token
      * @return JsonResponse
      */
-    public function __invoke($token): JsonResponse
+    public function __invoke(Request $request, $token): JsonResponse
     {
         $this->responseData->initData();
 
         try {
             $user = $this->userRepository->getByToken($token);
 
-            $this->responseData->addData('user', [
-                'first_name' => $user->first_name,
-                'last_name' => $user->last_name,
-                'email' => $user->email,
-            ]);
-        } catch (Exception $e) {
-            $this->responseData->addError('User cannot be found.');
+            $this->userRepository->updateData($user, $request->all());
+
+            $this->responseData->addSuccess('User data updated');
+        } catch (ModelNotFoundException $e) {
+            $this->responseData->addError('User cannot be found');
         }
 
         $this->jsonResponse->setData($this->responseData->getData());

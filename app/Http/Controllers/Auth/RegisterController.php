@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Exceptions\UserAlreadyExistsException;
 use App\Http\Controllers\ApiControllerInterface;
 use App\Http\Controllers\Controller;
 use App\Http\Utils\ResponseDataInterface;
@@ -59,9 +60,11 @@ class RegisterController extends Controller implements ApiControllerInterface
 
             $this->responseData->addSuccess(__('Registration finished successfully'));
         } catch (ValidationException $e) {
-            $this->responseData->addError(__('Input data could not be validated.'));
+            $this->responseData->addError(__('Invalid input data'));
 
             Log::alert($e->getMessage());
+        } catch (UserAlreadyExistsException $e) {
+            $this->responseData->addError($e->getMessage());
         }
 
         $this->jsonResponse->setData($this->responseData->getData());
@@ -82,10 +85,16 @@ class RegisterController extends Controller implements ApiControllerInterface
 
     /**
      * Process request
+     * @throws UserAlreadyExistsException
      */
     protected function processRequest(): void
     {
         $user = new User($this->request->post());
+
+        if (User::where('email', '=', $user->email)->exists()) {
+            throw new UserAlreadyExistsException('User with this email already exists');
+        }
+
         $user->password = app('hash')->make($this->request->post('password'));
 
         $user->save();

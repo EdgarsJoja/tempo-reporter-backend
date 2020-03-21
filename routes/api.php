@@ -17,6 +17,7 @@ $router->get('/', function () use ($router) {
 
 $router->group(['prefix' => 'api', 'namespace' => 'Api'], function () use ($router) {
     $router->group(['prefix' => 'v1', 'namespace' => 'v1'], function () use ($router) {
-        $router->get('user/{token}', 'UserController');
+        $router->get('user/{token}', 'UserGetDataController');
+        $router->patch('user/{token}', 'UserUpdateDataController');
     });
 });

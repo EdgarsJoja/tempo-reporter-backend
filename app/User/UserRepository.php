@@ -14,8 +14,17 @@ class UserRepository implements UserRepositoryInterface
      */
     public function getByToken(string $token): User
     {
-        $user = User::firstOrFail()->where('user_token', $token)->first();
+        return User::where('user_token', $token)->firstOrFail();
+    }
 
-        return $user ?? new User();
+    /**
+     * @inheritDoc
+     *
+     * @todo: Add user validation
+     */
+    public function updateData(User $user, array $data)
+    {
+        $user->fill($data);
+        $user->save();
     }
 }
