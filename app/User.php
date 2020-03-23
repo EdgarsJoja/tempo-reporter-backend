@@ -12,8 +12,12 @@ use Laravel\Lumen\Auth\Authorizable;
 /**
  * Class User
  * @property string id
+ * @property string email
+ * @property string password
  * @property string user_token
- * @property TempoData $tempoData
+ * @property string first_name
+ * @property string last_name
+ * @property TempoData tempoData
  * @package App
  */
 class User extends Model implements AuthenticatableContract, AuthorizableContract
@@ -37,25 +41,6 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     protected $hidden = [
         'password', 'user_token', 'remember_token'
     ];
-
-    /**
-     * @param $value
-     * @return $this
-     */
-    public function setApiToken($value): self
-    {
-        $this->user_token = $value;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getApiToken(): string
-    {
-        return (string)$this->user_token;
-    }
 
     /**
      * @return HasOne

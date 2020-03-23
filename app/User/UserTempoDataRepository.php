@@ -31,7 +31,9 @@ class UserTempoDataRepository implements UserTempoDataRepositoryInterface
      */
     public function getTempoData(string $userToken): TempoData
     {
-        return $this->userRepository->getByToken($userToken)->tempoData;
+        $user = $this->userRepository->getByToken($userToken);
+
+        return $user->tempoData ?? $this->initTempoDataModel($user);
     }
 
     /**
@@ -39,7 +41,6 @@ class UserTempoDataRepository implements UserTempoDataRepositoryInterface
      */
     public function updateTempoData(string $userToken, array $data): bool
     {
-        Log::debug($data);
         $user = $this->userRepository->getByToken($userToken);
         // @todo: Create interfaces for models and inject factories instead
         $tempoData = $user->tempoData ?? $this->initTempoDataModel($user);

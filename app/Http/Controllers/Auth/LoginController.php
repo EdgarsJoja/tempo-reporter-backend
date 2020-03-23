@@ -124,12 +124,12 @@ class LoginController extends Controller implements ApiControllerInterface
     {
         $apiToken = null;
 
-        if ($user->getApiToken()) {
-            $apiToken = $user->getApiToken();
+        if ($user->user_token) {
+            $apiToken = $user->user_token;
         } else {
             $apiToken = $this->tokenGenerator->generate();
 
-            $user->setApiToken($apiToken);
+            $user->user_token = $apiToken;
             $user->save();
         }
 
