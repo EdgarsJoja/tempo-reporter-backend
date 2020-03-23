@@ -19,5 +19,7 @@ $router->group(['prefix' => 'api', 'namespace' => 'Api'], function () use ($rout
     $router->group(['prefix' => 'v1', 'namespace' => 'v1'], function () use ($router) {
         $router->get('user/{token}', 'UserGetDataController');
         $router->patch('user/{token}', 'UserUpdateDataController');
+        $router->post('user/tempo/{token}', 'UserUpdateTempoDataController');
+        $router->get('user/tempo/{token}', 'UserGetTempoDataController');
     });
 });
