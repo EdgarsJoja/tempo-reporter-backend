@@ -98,4 +98,16 @@ $app->router->group([
     require __DIR__.'/../routes/api.php';
 });
 
+/*
+|--------------------------------------------------------------------------
+| Load The Application Configuration Files
+|--------------------------------------------------------------------------
+|
+| This loads all configuration files for specific areas.
+| Each configuration should be logically divided in separate file.
+|
+*/
+
+$app->configure('tempo');
+
 return $app;
