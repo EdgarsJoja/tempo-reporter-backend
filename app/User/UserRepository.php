@@ -2,6 +2,7 @@
 
 namespace App\User;
 
+use App\Registry\CurrentUserInterface;
 use App\User;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -12,11 +13,33 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 class UserRepository implements UserRepositoryInterface
 {
     /**
+     * @var CurrentUserInterface
+     */
+    protected $currentUser;
+
+    /**
+     * UserRepository constructor.
+     * @param CurrentUserInterface $currentUser
+     */
+    public function __construct(CurrentUserInterface $currentUser)
+    {
+        $this->currentUser = $currentUser;
+    }
+
+    /**
      * @inheritDoc
      */
     public function getByToken(string $token): User
     {
-        return User::where('user_token', $token)->firstOrFail();
+        if (!$this->currentUser->get()) {
+            try {
+                $this->currentUser->set(User::where('user_token', $token)->firstOrFail());
+            } catch (Exception $e) {
+                throw new ModelNotFoundException('User cannot be found');
+            }
+        }
+
+        return $this->currentUser->get();
     }
 
     /**
@@ -33,6 +56,7 @@ class UserRepository implements UserRepositoryInterface
     /**
      * @inheritDoc
      * @todo: Add email validation
+     * @todo: Add current user caching
      */
     public function getByEmail(string $email): User
     {

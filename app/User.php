@@ -6,6 +6,7 @@ use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Laravel\Lumen\Auth\Authorizable;
 
@@ -18,6 +19,7 @@ use Laravel\Lumen\Auth\Authorizable;
  * @property string first_name
  * @property string last_name
  * @property TempoData tempoData
+ * @property mixed reports
  * @package App
  */
 class User extends Model implements AuthenticatableContract, AuthorizableContract
@@ -48,5 +50,13 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     public function tempoData(): HasOne
     {
         return $this->hasOne(TempoData::class);
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function reports(): HasMany
+    {
+        return $this->hasMany(UserReport::class);
     }
 }

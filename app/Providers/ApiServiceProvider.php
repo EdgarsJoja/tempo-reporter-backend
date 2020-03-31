@@ -6,6 +6,8 @@ use App\Http\Utils\ResponseData;
 use App\Http\Utils\ResponseDataInterface;
 use App\Http\Utils\UserValidation;
 use App\Http\Utils\UserValidationInterface;
+use App\Registry\CurrentUser;
+use App\Registry\CurrentUserInterface;
 use App\Tempo\TempoClient;
 use App\Tempo\TempoClientInterface;
 use App\Tempo\Worklog\Formatter;
@@ -14,6 +16,8 @@ use App\Tempo\Worklog\WorklogService;
 use App\Tempo\Worklog\WorklogServiceInterface;
 use App\User\ApiTokenGenerator;
 use App\User\ApiTokenGeneratorInterface;
+use App\User\UserReportsRepository;
+use App\User\UserReportsRepositoryInterface;
 use App\User\UserTempoDataRepository;
 use App\User\UserTempoDataRepositoryInterface;
 use App\Utils\TimeFormatter;
@@ -52,6 +56,7 @@ class ApiServiceProvider extends ServiceProvider
         $this->app->bind(ApiTokenGeneratorInterface::class, ApiTokenGenerator::class);
         $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
         $this->app->bind(UserTempoDataRepositoryInterface::class, UserTempoDataRepository::class);
+        $this->app->bind(UserReportsRepositoryInterface::class, UserReportsRepository::class);
 
         // Tempo
         $this->app->bind(TempoClientInterface::class, TempoClient::class);
@@ -61,5 +66,8 @@ class ApiServiceProvider extends ServiceProvider
         // Date & Time
         $this->app->bind(CarbonInterface::class, Carbon::class);
         $this->app->bind(TimeFormatterInterface::class, TimeFormatter::class);
+
+        // Registry
+        $this->app->singleton(CurrentUserInterface::class, CurrentUser::class);
     }
 }

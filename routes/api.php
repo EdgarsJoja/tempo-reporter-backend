@@ -21,5 +21,6 @@ $router->group(['prefix' => 'api', 'namespace' => 'Api'], function () use ($rout
         $router->patch('user/{token}', 'UserUpdateDataController');
         $router->post('user/tempo/{token}', 'UserUpdateTempoDataController');
         $router->get('user/tempo/{token}', 'UserGetTempoDataController');
+        $router->get('user/report/{token}/{date}', 'UserGetReportController');
     });
 });

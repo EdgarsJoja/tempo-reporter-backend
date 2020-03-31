@@ -61,11 +61,15 @@ class Formatter implements FormatterInterface
             }
         }
 
-        foreach ($formattedWorklogs as &$issue) {
+        foreach ($formattedWorklogs as $key => &$issue) {
+            $issue['issue'] = $key;
             $issue['time'] = $this->timeFormatter->secondsToHumanTime($issue['time']);
         }
 
         unset($issue);
+
+        // Avoid associative array, to make it easier for JS on FE
+        $formattedWorklogs = array_values($formattedWorklogs);
 
         return [
             'worklogs' => $formattedWorklogs,
