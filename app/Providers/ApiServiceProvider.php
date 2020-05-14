@@ -8,6 +8,8 @@ use App\Http\Utils\UserValidation;
 use App\Http\Utils\UserValidationInterface;
 use App\Registry\CurrentUser;
 use App\Registry\CurrentUserInterface;
+use App\Team\TeamRepository;
+use App\Team\TeamRepositoryInterface;
 use App\Tempo\TempoClient;
 use App\Tempo\TempoClientInterface;
 use App\Tempo\Worklog\Formatter;
@@ -62,6 +64,9 @@ class ApiServiceProvider extends ServiceProvider
         $this->app->bind(TempoClientInterface::class, TempoClient::class);
         $this->app->bind(FormatterInterface::class, Formatter::class);
         $this->app->bind(WorklogServiceInterface::class, WorklogService::class);
+
+        // Team
+        $this->app->bind(TeamRepositoryInterface::class, TeamRepository::class);
 
         // Date & Time
         $this->app->bind(CarbonInterface::class, Carbon::class);
