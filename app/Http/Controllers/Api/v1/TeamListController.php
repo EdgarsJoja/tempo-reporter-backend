@@ -11,10 +11,10 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 /**
- * Class TeamUpdateDataController
+ * Class TeamListController
  * @package App\Http\Controllers\Api\v1
  */
-class TeamUpdateDataController extends Controller
+class TeamListController extends Controller
 {
     /**
      * @var JsonResponse
@@ -37,7 +37,7 @@ class TeamUpdateDataController extends Controller
     protected $teamRepository;
 
     /**
-     * TeamUpdateDataController constructor.
+     * TeamListController constructor.
      * @param JsonResponse $jsonResponse
      * @param ResponseDataInterface $responseData
      * @param UserRepositoryInterface $userRepository
@@ -67,21 +67,9 @@ class TeamUpdateDataController extends Controller
         try {
             $user = $this->userRepository->getByToken($token);
 
-            $teamId = $request->get('team_id');
+            $teams = $this->teamRepository->getList($user);
 
-            if ($teamId) {
-                $team = $this->teamRepository->getById($teamId);
-
-                // Allow team updates only if current user is owner
-                // @todo: Fix IDE not understanding Eloquent relationships
-                if ($user->is($team->owner)) {
-                    $this->teamRepository->updateData($team, $request->all());
-                }
-            } else {
-                $this->teamRepository->createTeam($request->all(), $user);
-            }
-
-            $this->responseData->addSuccess('Team data updated');
+            $this->responseData->addData('teams', $teams);
         } catch (ModelNotFoundException $e) {
             $this->responseData->addError($e->getMessage());
         }

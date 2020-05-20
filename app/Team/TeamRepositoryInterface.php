@@ -30,4 +30,12 @@ interface TeamRepositoryInterface
      * @param array $data
      */
     public function updateData(Team $team, array $data): void;
+
+    /**
+     * Get list of teams associated to user (as owner and participant)
+     *
+     * @param User $user
+     * @return Team[]
+     */
+    public function getList(User $user): array;
 }

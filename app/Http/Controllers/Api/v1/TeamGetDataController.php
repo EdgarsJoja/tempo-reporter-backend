@@ -11,10 +11,10 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 /**
- * Class TeamUpdateDataController
+ * Class TeamGetDataController
  * @package App\Http\Controllers\Api\v1
  */
-class TeamUpdateDataController extends Controller
+class TeamGetDataController extends Controller
 {
     /**
      * @var JsonResponse
@@ -37,7 +37,7 @@ class TeamUpdateDataController extends Controller
     protected $teamRepository;
 
     /**
-     * TeamUpdateDataController constructor.
+     * TeamGetDataController constructor.
      * @param JsonResponse $jsonResponse
      * @param ResponseDataInterface $responseData
      * @param UserRepositoryInterface $userRepository
@@ -58,30 +58,19 @@ class TeamUpdateDataController extends Controller
     /**
      * @param Request $request
      * @param $token
+     * @param $teamId
      * @return JsonResponse
      */
-    public function __invoke(Request $request, $token): JsonResponse
+    public function __invoke(Request $request, $token, $teamId): JsonResponse
     {
         $this->responseData->initData();
 
         try {
             $user = $this->userRepository->getByToken($token);
+            // @todo: Add functionality which checks if user is in team, only then allow to get data
+            $team = $this->teamRepository->getById($teamId);
 
-            $teamId = $request->get('team_id');
-
-            if ($teamId) {
-                $team = $this->teamRepository->getById($teamId);
-
-                // Allow team updates only if current user is owner
-                // @todo: Fix IDE not understanding Eloquent relationships
-                if ($user->is($team->owner)) {
-                    $this->teamRepository->updateData($team, $request->all());
-                }
-            } else {
-                $this->teamRepository->createTeam($request->all(), $user);
-            }
-
-            $this->responseData->addSuccess('Team data updated');
+            $this->responseData->addData('team', $team->toArray());
         } catch (ModelNotFoundException $e) {
             $this->responseData->addError($e->getMessage());
         }

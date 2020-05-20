@@ -2,6 +2,8 @@
 
 namespace App;
 
+use DateTime;
+use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -22,11 +24,27 @@ class Team extends Model
         'name', 'report_time'
     ];
 
+    protected $hidden = [
+        'owner_id'
+    ];
+
+    /**
+     * Remove seconds part from mysql time column type
+     *
+     * @param $value
+     * @return string
+     * @throws Exception
+     */
+    public function getReportTimeAttribute($value): string
+    {
+        return (new DateTime($value))->format('H:i');
+    }
+
     /**
      * @return BelongsTo
      */
     public function owner(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'id', 'owner_id');
+        return $this->belongsTo(User::class, 'owner_id', 'id');
     }
 }

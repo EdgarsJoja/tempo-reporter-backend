@@ -23,7 +23,7 @@ class TeamRepository implements TeamRepositoryInterface
         $team->fill($data);
         $team->owner_id = $owner->id;
 
-        $owner->teams()->save($team);
+        $owner->ownedTeams()->save($team);
     }
 
     /**
@@ -44,5 +44,23 @@ class TeamRepository implements TeamRepositoryInterface
     {
         $team->fill($data);
         $team->save();
+    }
+
+    /**
+     * Get list of teams associated to user (as owner and participant)
+     *
+     * @param User $user
+     * @return Team[]
+     */
+    public function getList(User $user): array
+    {
+        $ownedTeams = $user->ownedTeams()->get()->map(static function ($team) {
+            $team['owned'] = true;
+            return $team;
+        })->toArray();
+
+        // @todo: Add participant teams
+
+        return $ownedTeams;
     }
 }

@@ -63,7 +63,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     /**
      * @return HasMany
      */
-    public function teams(): HasMany
+    public function ownedTeams(): HasMany
     {
         return $this->hasMany(Team::class, 'owner_id', 'id');
     }

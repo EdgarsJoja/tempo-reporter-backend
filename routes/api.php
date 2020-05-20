@@ -23,6 +23,8 @@ $router->group(['prefix' => 'api', 'namespace' => 'Api'], function () use ($rout
         $router->get('user/tempo/{token}', 'UserGetTempoDataController');
         $router->get('user/report/{token}/{date}', 'UserGetReportController');
         $router->post('user/report/generate/{token}/{date}', 'UserGenerateReportController');
+        $router->get('team/list/{token}', 'TeamListController');
+        $router->get('team/{token}/{team_id}', 'TeamGetDataController');
         $router->patch('team/{token}', 'TeamUpdateDataController');
     });
 });
