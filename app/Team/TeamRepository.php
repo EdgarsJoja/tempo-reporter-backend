@@ -4,6 +4,7 @@ namespace App\Team;
 
 use App\Team;
 use App\User;
+use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 /**
@@ -62,5 +63,18 @@ class TeamRepository implements TeamRepositoryInterface
         // @todo: Add participant teams
 
         return $ownedTeams;
+    }
+
+    /**
+     * Delete team by ID
+     *
+     * @param $teamId
+     * @throws Exception
+     */
+    public function delete($teamId): void
+    {
+        /** @var Team $team */
+        $team = Team::find($teamId);
+        $team->delete();
     }
 }

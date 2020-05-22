@@ -4,6 +4,7 @@ namespace App\Team;
 
 use App\Team;
 use App\User;
+use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 /**
@@ -38,4 +39,12 @@ interface TeamRepositoryInterface
      * @return Team[]
      */
     public function getList(User $user): array;
+
+    /**
+     * Delete team by ID
+     *
+     * @param $teamId
+     * @throws Exception
+     */
+    public function delete($teamId): void;
 }
