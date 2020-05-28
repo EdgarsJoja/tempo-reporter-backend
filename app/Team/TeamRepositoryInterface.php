@@ -16,8 +16,9 @@ interface TeamRepositoryInterface
     /**
      * @param array $data
      * @param User $owner
+     * @return Team
      */
-    public function createTeam(array $data, User $owner): void;
+    public function createTeam(array $data, User $owner): Team;
 
     /**
      * @param $teamId
@@ -47,4 +48,12 @@ interface TeamRepositoryInterface
      * @throws Exception
      */
     public function delete($teamId): void;
+
+    /**
+     * Add users to team
+     *
+     * @param Team $team
+     * @param array $ids
+     */
+    public function addUsers(Team $team, array $ids): void;
 }

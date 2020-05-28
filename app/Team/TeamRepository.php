@@ -16,15 +16,19 @@ class TeamRepository implements TeamRepositoryInterface
     /**
      * @param array $data
      * @param User $owner
+     * @return Team
      */
-    public function createTeam(array $data, User $owner): void
+    public function createTeam(array $data, User $owner): Team
     {
         $team = new Team();
 
         $team->fill($data);
         $team->owner_id = $owner->id;
 
-        $owner->ownedTeams()->save($team);
+        /** @var Team $savedTeam */
+        $savedTeam = $owner->ownedTeams()->save($team);
+
+        return $savedTeam;
     }
 
     /**
@@ -76,5 +80,16 @@ class TeamRepository implements TeamRepositoryInterface
         /** @var Team $team */
         $team = Team::find($teamId);
         $team->delete();
+    }
+
+    /**
+     * Add users to team
+     *
+     * @param Team $team
+     * @param array $ids
+     */
+    public function addUsers(Team $team, array $ids): void
+    {
+        $team->users()->sync($ids);
     }
 }

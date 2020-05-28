@@ -5,6 +5,7 @@ namespace App\User;
 use App\Registry\CurrentUserInterface;
 use App\User;
 use Exception;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 /**
@@ -65,5 +66,23 @@ class UserRepository implements UserRepositoryInterface
         } catch (Exception $e) {
             throw new ModelNotFoundException(sprintf('User with email "%s" cannot be found', $email));
         }
+    }
+
+    /**
+     * Get multiple users by given emails
+     *
+     * @param array $emails
+     * @return Collection
+     * @throws Exception
+     */
+    public function getMultipleByEmails(array $emails): Collection
+    {
+        try {
+            return User::whereIn('email', $emails)->get();
+        } catch (Exception $e) {
+            throw $e;
+            // @todo: Handle exception
+        }
+
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\v1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Utils\ResponseDataInterface;
+use App\Team;
 use App\Team\TeamRepositoryInterface;
 use App\User\UserRepositoryInterface;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -70,7 +71,7 @@ class TeamGetDataController extends Controller
             // @todo: Add functionality which checks if user is in team, only then allow to get data
             $team = $this->teamRepository->getById($teamId);
 
-            $this->responseData->addData('team', $team->toArray());
+            $this->responseData->addData('team', $this->prepareTeamData($team));
         } catch (ModelNotFoundException $e) {
             $this->responseData->addError($e->getMessage());
         }
@@ -78,5 +79,21 @@ class TeamGetDataController extends Controller
         $this->jsonResponse->setData($this->responseData->getData());
 
         return $this->jsonResponse;
+    }
+
+    /**
+     * @param Team $team
+     * @return array
+     *
+     * @todo: Consider moving this to separate class. Team data presentation class, for example.
+     */
+    protected function prepareTeamData(Team $team): array
+    {
+        $data = $team->toArray();
+        $teamUsersEmails = $team->users()->pluck('email')->toArray();
+
+        $data['emails'] = $teamUsersEmails;
+
+        return $data;
     }
 }

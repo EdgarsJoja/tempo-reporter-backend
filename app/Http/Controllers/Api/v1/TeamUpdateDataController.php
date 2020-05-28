@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\v1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Utils\ResponseDataInterface;
+use App\Team;
 use App\Team\TeamRepositoryInterface;
 use App\User\UserRepositoryInterface;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -76,9 +77,12 @@ class TeamUpdateDataController extends Controller
                 // @todo: Fix IDE not understanding Eloquent relationships
                 if ($user->is($team->owner)) {
                     $this->teamRepository->updateData($team, $request->all());
+
+                    $this->addTeamUsers($team, $request->input('emails', []));
                 }
             } else {
-                $this->teamRepository->createTeam($request->all(), $user);
+                $team = $this->teamRepository->createTeam($request->all(), $user);
+                $this->addTeamUsers($team, $request->input('emails', []));
             }
 
             $this->responseData->addSuccess('Team data updated');
@@ -89,5 +93,27 @@ class TeamUpdateDataController extends Controller
         $this->jsonResponse->setData($this->responseData->getData());
 
         return $this->jsonResponse;
+    }
+
+    /**
+     * @param Team $team
+     * @param array $emails
+     */
+    protected function addTeamUsers(Team $team, array $emails): void
+    {
+        $users = $this->userRepository->getMultipleByEmails($emails);
+
+        $usersIds = $users->pluck('id')->toArray();
+        $usersEmails = $users->pluck('email')->toArray();
+
+        $this->teamRepository->addUsers($team, $usersIds);
+
+        $emailsDifference = array_diff($emails, $usersEmails);
+
+        if ($emailsDifference) {
+            $this->responseData->addInfoMessage(
+                sprintf('Users with these emails could not be found: %s', implode(', ', $emailsDifference))
+            );
+        }
     }
 }
