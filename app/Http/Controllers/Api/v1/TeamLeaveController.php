@@ -10,13 +10,12 @@ use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Validation\UnauthorizedException;
 
 /**
- * Class TeamDeleteController
+ * Class TeamLeaveController
  * @package App\Http\Controllers\Api\v1
  */
-class TeamDeleteController extends Controller
+class TeamLeaveController extends Controller
 {
     /**
      * @var JsonResponse
@@ -39,7 +38,7 @@ class TeamDeleteController extends Controller
     protected $teamRepository;
 
     /**
-     * TeamDeleteController constructor.
+     * TeamLeaveController constructor.
      * @param JsonResponse $jsonResponse
      * @param ResponseDataInterface $responseData
      * @param UserRepositoryInterface $userRepository
@@ -71,19 +70,13 @@ class TeamDeleteController extends Controller
             $user = $this->userRepository->getByToken($token);
             $team = $this->teamRepository->getById($teamId);
 
-            if (!$user->is($team->owner)) {
-                throw new UnauthorizedException('Current user is not allowed to edit this team');
-            }
+            $this->teamRepository->removeUsers($team, [$user->id]);
 
-            $this->teamRepository->delete($teamId);
-
-            $this->responseData->addSuccess('Team deleted successfully');
+            $this->responseData->addSuccess('Left team successfully');
         } catch (ModelNotFoundException $e) {
             $this->responseData->addError($e->getMessage());
-        } catch (UnauthorizedException $e) {
-            $this->responseData->addError($e->getMessage());
         } catch (Exception $e) {
-            $this->responseData->addError('Team could not be deleted');
+            $this->responseData->addError('Something went wrong, couldn\'t leave team');
         }
 
         $this->jsonResponse->setData($this->responseData->getData());

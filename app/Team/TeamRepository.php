@@ -59,14 +59,14 @@ class TeamRepository implements TeamRepositoryInterface
      */
     public function getList(User $user): array
     {
+        $participateTeams = $user->participateTeams()->get();
+
         $ownedTeams = $user->ownedTeams()->get()->map(static function ($team) {
             $team['owned'] = true;
             return $team;
-        })->toArray();
+        });
 
-        // @todo: Add participant teams
-
-        return $ownedTeams;
+        return $participateTeams->merge($ownedTeams)->toArray();
     }
 
     /**
@@ -91,5 +91,16 @@ class TeamRepository implements TeamRepositoryInterface
     public function addUsers(Team $team, array $ids): void
     {
         $team->users()->sync($ids);
+    }
+
+    /**
+     * Remove users from team
+     *
+     * @param Team $team
+     * @param array $ids
+     */
+    public function removeUsers(Team $team, array $ids): void
+    {
+        $team->users()->detach($ids);
     }
 }

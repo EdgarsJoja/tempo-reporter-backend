@@ -34,5 +34,6 @@ $router->group(['prefix' => 'api', 'namespace' => 'Api'], function () use ($rout
         $router->get('team/{token}/{team_id}', 'TeamGetDataController');
         $router->patch('team/{token}', 'TeamUpdateDataController');
         $router->delete('team/{token}/{team_id}', 'TeamDeleteController');
+        $router->patch('team/leave/{token}/{team_id}', 'TeamLeaveController');
     });
 });

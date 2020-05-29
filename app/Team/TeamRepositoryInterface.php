@@ -50,10 +50,18 @@ interface TeamRepositoryInterface
     public function delete($teamId): void;
 
     /**
-     * Add users to team
+     * Add users to team (these users will replace current users)
      *
      * @param Team $team
      * @param array $ids
      */
     public function addUsers(Team $team, array $ids): void;
+
+    /**
+     * Remove users from team
+     *
+     * @param Team $team
+     * @param array $ids
+     */
+    public function removeUsers(Team $team, array  $ids): void;
 }
