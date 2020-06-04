@@ -8,6 +8,8 @@ use App\Http\Utils\UserValidation;
 use App\Http\Utils\UserValidationInterface;
 use App\Registry\CurrentUser;
 use App\Registry\CurrentUserInterface;
+use App\Team\TeamReportsGenerator;
+use App\Team\TeamReportsGeneratorInterface;
 use App\Team\TeamRepository;
 use App\Team\TeamRepositoryInterface;
 use App\Tempo\TempoClient;
@@ -67,6 +69,7 @@ class ApiServiceProvider extends ServiceProvider
 
         // Team
         $this->app->bind(TeamRepositoryInterface::class, TeamRepository::class);
+        $this->app->bind(TeamReportsGeneratorInterface::class, TeamReportsGenerator::class);
 
         // Date & Time
         $this->app->bind(CarbonInterface::class, Carbon::class);

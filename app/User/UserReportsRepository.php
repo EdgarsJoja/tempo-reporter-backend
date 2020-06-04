@@ -28,6 +28,7 @@ class UserReportsRepository implements UserReportsRepositoryInterface
 
     /**
      * @inheritDoc
+     * @todo: Move user outside of method, to allow passing already obtained users
      */
     public function saveReport(string $userToken, CarbonInterface $date, array $report)
     {
@@ -41,6 +42,7 @@ class UserReportsRepository implements UserReportsRepositoryInterface
 
     /**
      * @inheritDoc
+     * @todo: Move user outside of method, to allow passing already obtained users
      */
     public function getReport(string $userToken, CarbonInterface $date): UserReport
     {

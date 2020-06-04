@@ -3,6 +3,8 @@
 namespace App\Console;
 
 use App\Console\Commands\ReportGenerateCommand;
+use App\Console\Commands\TestCommand;
+use App\Cron\TeamReportsGenerator;
 use Illuminate\Console\Scheduling\Schedule;
 use Laravel\Lumen\Console\Kernel as ConsoleKernel;
 
@@ -14,7 +16,8 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        ReportGenerateCommand::class
+        ReportGenerateCommand::class,
+        TestCommand::class
     ];
 
     /**
@@ -25,6 +28,6 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        //
+        $schedule->call(new TeamReportsGenerator)->everyFifteenMinutes();
     }
 }
