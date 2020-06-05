@@ -2,7 +2,9 @@
 
 namespace App\Console\Commands;
 
+use App\Mail\TeamReportMail;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Mail;
 
 /**
  * Class TestCommand
@@ -29,5 +31,7 @@ class TestCommand extends Command
      */
     public function handle(): void
     {
+        Mail::to('test@test.com')
+            ->send(new TeamReportMail());
     }
 }
