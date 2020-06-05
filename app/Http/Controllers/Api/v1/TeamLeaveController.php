@@ -59,16 +59,16 @@ class TeamLeaveController extends Controller
     /**
      * @param Request $request
      * @param $token
-     * @param $teamId
+     * @param $team_id
      * @return JsonResponse
      */
-    public function __invoke(Request $request, $token, $teamId): JsonResponse
+    public function __invoke(Request $request, $token, $team_id): JsonResponse
     {
         $this->responseData->initData();
 
         try {
             $user = $this->userRepository->getByToken($token);
-            $team = $this->teamRepository->getById($teamId);
+            $team = $this->teamRepository->getById($team_id);
 
             $this->teamRepository->removeUsers($team, [$user->id]);
 

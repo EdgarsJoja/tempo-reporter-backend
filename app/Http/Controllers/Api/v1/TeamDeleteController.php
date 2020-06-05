@@ -60,22 +60,22 @@ class TeamDeleteController extends Controller
     /**
      * @param Request $request
      * @param $token
-     * @param $teamId
+     * @param $team_id
      * @return JsonResponse
      */
-    public function __invoke(Request $request, $token, $teamId): JsonResponse
+    public function __invoke(Request $request, $token, $team_id): JsonResponse
     {
         $this->responseData->initData();
 
         try {
             $user = $this->userRepository->getByToken($token);
-            $team = $this->teamRepository->getById($teamId);
+            $team = $this->teamRepository->getById($team_id);
 
             if (!$user->is($team->owner)) {
                 throw new UnauthorizedException('Current user is not allowed to edit this team');
             }
 
-            $this->teamRepository->delete($teamId);
+            $this->teamRepository->delete($team_id);
 
             $this->responseData->addSuccess('Team deleted successfully');
         } catch (ModelNotFoundException $e) {
