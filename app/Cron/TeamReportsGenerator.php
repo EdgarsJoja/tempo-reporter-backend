@@ -5,7 +5,6 @@ namespace App\Cron;
 use App\Team;
 use App\Team\TeamReportsGeneratorInterface;
 use Carbon\Carbon;
-use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Collection;
 
 /**
@@ -17,12 +16,7 @@ class TeamReportsGenerator
     /**
      * How many minutes ahead to check teams and generate reports
      */
-    protected const MINUTES_GENERATE_AHEAD = 15;
-
-    /**
-     * @var CarbonInterface
-     */
-    protected $datetime;
+    protected const MINUTES_GENERATE_AHEAD = 5;
 
     /**
      * @var TeamReportsGeneratorInterface
@@ -31,12 +25,10 @@ class TeamReportsGenerator
 
     /**
      * Execute functionality
-     * @param CarbonInterface $datetime
      * @param TeamReportsGeneratorInterface $teamReportsGenerator
      */
-    public function __invoke(CarbonInterface $datetime, TeamReportsGeneratorInterface $teamReportsGenerator)
+    public function __invoke(TeamReportsGeneratorInterface $teamReportsGenerator)
     {
-        $this->datetime = $datetime;
         $this->teamReportsGenerator = $teamReportsGenerator;
 
         $teams = $this->getTeamsWithUpcomingReports();
@@ -54,6 +46,8 @@ class TeamReportsGenerator
     protected function getTeamsWithUpcomingReports(): Collection
     {
         $datetime = new Carbon();
+        // @todo: Make this change global
+        $datetime->timezone(env('APP_TIMEZONE'));
 
         $currentTime = $datetime->toTimeString();
         $aheadTime = $datetime->addMinutes(self::MINUTES_GENERATE_AHEAD)->toTimeString();

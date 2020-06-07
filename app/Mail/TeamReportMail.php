@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Team;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
@@ -16,10 +17,25 @@ class TeamReportMail extends Mailable
     use SerializesModels;
 
     /**
+     * @var Team
+     */
+    public $team;
+
+    /**
+     * TeamReportMail constructor.
+     * @param Team $team
+     */
+    public function __construct(Team $team)
+    {
+        $this->team = $team;
+    }
+
+    /**
      * @return TeamReportMail
      */
     public function build(): TeamReportMail
     {
-        return $this->subject('Daily <TEAM_NAME> report')->markdown('emails.team.report');
+        return $this->subject("Daily {$this->team->name} report")
+            ->markdown('emails.team.report');
     }
 }

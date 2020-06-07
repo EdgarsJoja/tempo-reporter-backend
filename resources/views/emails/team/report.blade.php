@@ -1,5 +1,5 @@
 @component('mail::message')
-# Team Report
+# {{ $team->name }} Report
 
 Test text
 
