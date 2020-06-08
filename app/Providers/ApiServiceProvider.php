@@ -20,6 +20,8 @@ use App\Tempo\Worklog\WorklogService;
 use App\Tempo\Worklog\WorklogServiceInterface;
 use App\User\ApiTokenGenerator;
 use App\User\ApiTokenGeneratorInterface;
+use App\User\UserDataPresentation;
+use App\User\UserDataPresentationInterface;
 use App\User\UserReportsRepository;
 use App\User\UserReportsRepositoryInterface;
 use App\User\UserTempoDataRepository;
@@ -61,6 +63,7 @@ class ApiServiceProvider extends ServiceProvider
         $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
         $this->app->bind(UserTempoDataRepositoryInterface::class, UserTempoDataRepository::class);
         $this->app->bind(UserReportsRepositoryInterface::class, UserReportsRepository::class);
+        $this->app->bind(UserDataPresentationInterface::class, UserDataPresentation::class);
 
         // Tempo
         $this->app->bind(TempoClientInterface::class, TempoClient::class);

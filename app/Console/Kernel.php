@@ -30,7 +30,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // @todo: Create commands and schedule them instead
-        $schedule->call(new TeamReportsGenerator())->everyFiveMinutes();
-        $schedule->call(new TeamReportsMailer())->everyMinute();
+        $schedule->call(new TeamReportsGenerator())->weekdays()->everyFiveMinutes();
+        $schedule->call(new TeamReportsMailer())->weekdays()->everyMinute();
     }
 }
